@@ -1,0 +1,58 @@
+{% extends 'mailing/base.html' %}
+
+{% load user_tags %}
+{% load mailing_group_tags %}
+
+{% block title %}Пользователи{% endblock %}
+
+{% block content %}
+
+    {% include 'mailing/includes/header.html' %}
+
+    <section class="py-1 text-center container">
+        <div class="row py-lg-1">
+            <div class="col-lg-6 col-md-8 mx-auto"><h1 class="fw-light">Пользователи сервиса</h1>
+                <p class="lead text-body-secondary">Подробнее о наших пользователях!</p>
+                <p>
+                    <a href="#" class="btn btn-primary my-2">Кнопка1</a>
+                    <a href="#" class="btn btn-secondary my-2">Кнопка2</a>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <h3>Список пользователей сервиса:</h3>
+    <div class="album py-5 bg-body-tertiary">
+        <div class="container">
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                {% for user in users %}
+                <div class="col">
+                    <div class="card shadow-sm h-100 d-flex flex-column">
+                        <img src="{{ user.avatar | media_filter }}" alt="{{ user.username }}" width="150">
+                        <div class="card-body">
+                            <p class="card-text fw-bold mb-1">Пользователь: {{ user.email }}</p>
+                            <p class="card-text fw-bold mb-1">Имя пользователя: {{ user.username }}</p>
+                            <p class="card-text mb-1">Телефон: {{ user.phone_number }}</p>
+                            <p class="card-text mb-1">Страна: {{ user.country }}</p>
+                            <div class="">
+                                <div class="btn-group">
+                                    <a href="{% url 'mailing:home' %}">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary">На главную</button>
+                                    </a>
+                                </div>
+
+                                <div class="btn-group">
+                                    <a href="{% url 'users:disable_profile' user.pk %}">
+                                        <button type="button" class="btn btn-sm btn-danger">Деактивировать</button>
+                                    </a>
+                                </div>
+                                <small class="text-body-secondary"></small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

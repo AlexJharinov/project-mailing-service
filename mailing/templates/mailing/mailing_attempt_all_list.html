@@ -1,0 +1,50 @@
+{% extends 'mailing/base.html' %}
+
+{% block title %}Попытки рассылок{% endblock %}
+
+{% block content %}
+
+    {% include 'mailing/includes/header.html' %}
+    <h3>Попытки всех рассылок:</h3>
+    <div class="album py-5 bg-body-tertiary">
+        <div class="container">
+            <div class="col">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5>Всего отправлено рассылок: {{ attempt_list.count }} </h5>
+                        <table class="table table-bordered">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Время</th>
+                                    <th>Рассылка</th>
+                                    <th>Статус</th>
+                                    <th>Ответ почтового сервера</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for attempt in attempt_list %}
+                                <tr>
+                                    <td>{{ attempt.date_and_time }}</td>
+                                    <td>{{ attempt.mailing.id }}</td>
+                                    <td>{{ attempt.get_status_display }}</td>
+                                    <td>{{ attempt.server_mail_response }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr><td colspan="3">Нет попыток отправки.</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="btn-group">
+                                <a href="{% url 'mailing:home' %}">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary">На главную</button>
+                                </a>
+                            </div>
+                            <small class="text-body-secondary"></small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

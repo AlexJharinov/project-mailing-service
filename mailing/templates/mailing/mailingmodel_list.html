@@ -1,0 +1,80 @@
+{% extends 'mailing/base.html' %}
+
+{% block title %}Рассылки{% endblock %}
+
+{% block content %}
+
+    {% include 'mailing/includes/header.html' %}
+
+    <section class="py-1 text-center container">
+        <div class="row py-lg-1">
+            <div class="col-lg-6 col-md-8 mx-auto"><h1 class="fw-light">Рассылки</h1>
+                <p class="lead text-body-secondary">Подробнее о рассылках!</p>
+                <p>
+                    {% if perms.mailing.add_mailingmodel %}
+                        <a href="{% url 'mailing:mailingmodel_create' %}" class="btn btn-primary my-2">Добавить рассылку</a>
+                    {% endif %}
+                    <a href="#" class="btn btn-secondary my-2">Кнопка</a>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <h3>Список рассылок:</h3>
+    <div class="album py-5 bg-body-tertiary">
+        <div class="container">
+            <div class="row row-cols-1 row-cols-sm-1 row-cols-md-2 g-3">
+                {% for mailing in mailingmodel_list %}
+                <div class="col">
+                    <div class="card shadow-sm h-100 d-flex flex-column">
+                        <div class="card-body">
+                            <p class="card-text">Рассылка №: {{ mailing.id }}</p>
+                            <p class="card-text">Начало: {{ mailing.beginning_sending }}</p>
+                            <p class="card-text">Окончание: {{ mailing.end_sending }}</p>
+                            <p class="card-text">
+                                Статус:
+                                {% if mailing.status == 'created' %}
+                                    Создана
+                                {% elif mailing.status == 'started' %}
+                                    Запущена
+                                {% elif mailing.status == 'finished' %}
+                                    Завершена
+                                {% endif %}
+                            </p>
+                            <p class="card-text">Заголовок: {{ mailing.message }}</p>
+                            <p class="card-text">
+                                Подписчики рассылки:
+                                <ul>
+                                    {% for sub in mailing.subscriber.all %}
+                                        <li>{{ sub }}</li>
+                                    {% empty %}
+                                        <li>Нет подписчиков</li>
+                                    {% endfor %}
+                                </ul>
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="btn-group">
+                                    <a href="{% url 'mailing:mailingmodel_detail' mailing.pk %}">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary">Посмотреть</button>
+                                    </a>
+                                    {% if perms.mailing.can_send_message %}
+                                        <a href="{% url 'mailing:sending_mailing' mailing.pk %}">
+                                            <button type="button" class="btn btn-sm btn-primary">Отправить</button>
+                                        </a>
+                                    {% endif %}
+                                    {% if perms.mailing.can_disable_mailing %}
+                                        <a href="{% url 'mailing:disable_mailing' mailing.pk %}">
+                                            <button type="button" class="btn btn-sm btn-danger">Отключить</button>
+                                        </a>
+                                    {% endif %}
+                                </div>
+                                <small class="text-body-secondary"></small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

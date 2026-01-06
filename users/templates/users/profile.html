@@ -1,0 +1,46 @@
+{% extends 'mailing/base.html' %}
+
+{% load user_tags %}
+
+{% block title %}Профиль{% endblock %}
+
+{% block content %}
+
+    {% include 'mailing/includes/header.html' %}
+
+    <div class="album py-5 bg-body-tertiary">
+        <div class="container">
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                <div class="col">
+                    <div class="card shadow-sm">
+                        <img src="{{ user.avatar | media_filter }}" alt="{{ user.username }}" width="150">
+                        <div class="card-body">
+                            <p class="card-text fw-bold mb-1">Пользователь: {{ user.email }}</p>
+                            <p class="card-text fw-bold mb-1">Имя пользователя: {{ user.username }}</p>
+                            <p class="card-text mb-1">Телефон: {{ user.phone_number }}</p>
+                            <p class="card-text mb-1">Страна: {{ user.country }}</p>
+                            <div class="">
+                                <div class="btn-group">
+                                    <a href="{% url 'mailing:home' %}">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary">На главную</button>
+                                    </a>
+                                </div>
+                                <div class="btn-group">
+                                    <a href="{% url 'users:edit-profile' %}">
+                                        <button type="button" class="btn btn-sm btn-primary">Редактировать</button>
+                                    </a>
+                                </div>
+                                <div class="btn-group">
+                                    <a href="#">
+                                        <button type="button" class="btn btn-sm btn-danger">Удалить</button>
+                                    </a>
+                                </div>
+                                <small class="text-body-secondary"></small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

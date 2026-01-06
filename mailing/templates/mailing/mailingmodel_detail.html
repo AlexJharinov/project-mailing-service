@@ -1,0 +1,66 @@
+{% extends 'mailing/base.html' %}
+
+{% block title %}Рассылка{% endblock %}
+
+{% block content %}
+
+    {% include 'mailing/includes/header.html' %}
+    <h3>Рассылка:</h3>
+    <div class="album py-5 bg-body-tertiary">
+        <div class="container">
+            <div class="row row-cols-1 row-cols-sm-1 row-cols-md-2 g-3">
+                <div class="col">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <p class="card-text">Рассылка №: {{ mailingmodel.id }}</p>
+                            <p class="card-text">Начало: {{ mailingmodel.beginning_sending }}</p>
+                            <p class="card-text">Окончание: {{ mailingmodel.end_sending }}</p>
+                            <p class="card-text">
+                                Статус:
+                                {% if mailingmodel.status == 'created' %}
+                                    Создана
+                                {% elif mailingmodel.status == 'started' %}
+                                    Запущена
+                                {% elif mailingmodel.status == 'finished' %}
+                                    Завершена
+                                {% endif %}
+                            </p>
+                            <p class="card-text">Заголовок: {{ mailingmodel.message }}</p>
+                            <p class="card-text">
+                                Подписчики рассылки:
+                                <ul>
+                                    {% for sub in mailingmodel.subscriber.all %}
+                                        <li>{{ sub }}</li>
+                                    {% empty %}
+                                        <li>Нет подписчиков</li>
+                                    {% endfor %}
+                                </ul>
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="btn-group">
+                                    <a href="{% url 'mailing:mailingmodel_list' %}">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary">Назад к списку</button>
+                                    </a>
+                                    {% if perms.mailing.change_mailingmodel %}
+                                        <a href="{% url 'mailing:mailingmodel_update' mailingmodel.pk %}">
+                                            <button type="button" class="btn btn-sm btn-primary">Редактировать</button>
+                                        </a>
+                                    {% endif %}
+                                    {% if perms.mailing.delete_mailingmodel %}
+                                        <a href="{% url 'mailing:mailingmodel_delete' mailingmodel.pk %}">
+                                            <button type="button" class="btn btn-sm btn-danger">Удалить</button>
+                                        </a>
+                                    {% endif %}
+                                    <a href="{% url 'mailing:mailing_attempts' mailingmodel.id %}">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary">Отправки</button>
+                                    </a>
+                                </div>
+                                <small class="text-body-secondary"></small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
