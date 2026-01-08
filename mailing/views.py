@@ -17,25 +17,29 @@ from mailing.services import get_subscriber_list_from_cache, get_message_list_fr
 
 
 class HomeView(LoginRequiredMixin, TemplateView):
-    template_name = 'mailing/home.html'
+    template_name = "mailing/home.html"
 
-    # На главной странице отображаем количество рассылок, активных и уникальных получателей
-    # по вошедшему пользователю
+    from django.utils import timezone
+
     def get_context_data(self, **kwargs):
-        user = self.request.user  # Получаем текущего пользователя
         context = super().get_context_data(**kwargs)
-        # Фильтруем объекты MailingModel по владельцу (текущему пользователю)
+        user = self.request.user
+        now = timezone.now()
+
         mailings = MailingModel.objects.filter(owner=user)
-        # Всего рассылок
-        context['total_mailings'] = mailings.count()
-        # Активных рассылок
-        context['active_mailings'] = mailings.filter(status=MailingModel.STARTED).count()
-        # Уникальных получателей
-        # Подписчиков, связанных с любыми рассылками пользователя
-        unique_subscribers = Subscriber.objects.filter(
-            subscribers__in=mailings
-        ).distinct().count()
-        context['unique_subscribers'] = unique_subscribers
+
+        context["total_mailings"] = mailings.count()
+
+        context["active_mailings"] = mailings.filter(
+            is_active=True,
+            beginning_sending__lte=now,
+            end_sending__gte=now,
+        ).count()
+
+        context["unique_subscribers"] = (
+            mailings.values("subscriber").distinct().count()
+        )
+
         return context
 
     # # если нужно всего в системе

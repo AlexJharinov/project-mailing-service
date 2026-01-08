@@ -20,6 +20,6 @@ class CustomUser(AbstractUser):
         ]
 
     def __str__(self):
-        return self.emailimport.models
+        return self.email
 
 # Create your models here.
