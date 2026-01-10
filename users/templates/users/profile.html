@@ -1,6 +1,6 @@
 {% extends 'mailing/base.html' %}
 
-{% load user_tags %}
+{% load mailing_group_tags %}
 
 {% block title %}Профиль{% endblock %}
 
@@ -13,7 +13,11 @@
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
                 <div class="col">
                     <div class="card shadow-sm">
-                        <img src="{{ user.avatar | media_filter }}" alt="{{ user.username }}" width="150">
+                        {% if user.avatar %}
+                            <img src="{{ user.avatar.url }}" alt="{{ user.username }}" width="150">
+                        {% else %}
+                            <img src="https://via.placeholder.com/150" alt="{{ user.username }}" width="150">
+                        {% endif %}
                         <div class="card-body">
                             <p class="card-text fw-bold mb-1">Пользователь: {{ user.email }}</p>
                             <p class="card-text fw-bold mb-1">Имя пользователя: {{ user.username }}</p>

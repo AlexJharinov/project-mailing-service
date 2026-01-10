@@ -14,31 +14,39 @@ from django.contrib.auth.models import Group
 
 # новая версия с добавлением в группу владельца при создании
 class RegisterView(CreateView):
-    template_name = 'users/register.html'
+    template_name = "users/register.html"
     form_class = CustomUserCreationForm
-    success_url = reverse_lazy('users:login')
+    success_url = reverse_lazy("users:login")
 
     def form_valid(self, form):
-        user = form.save()
-        user.is_active = False
-        token = secrets.token_hex(16)
-        user.token = token
-        # Перед сохранением пользователя помещаем его в группу Owners
-        try:
-            owners_group = Group.objects.get(name='Owners')
-            user.groups.add(owners_group)
-        except Group.DoesNotExist:
-            pass  # Группа ещё не создана
-        user.save()
+        self.object = form.save(commit=False)
+        self.object.is_active = False
+        self.object.token = secrets.token_hex(16)
+        self.object.save()
+        form.save_m2m()
+
+        owners_group, _ = Group.objects.get_or_create(name="Owners")
+        self.object.groups.add(owners_group)
+
         host = self.request.get_host()
-        url = f'http://{host}/users/email-confirm/{token}'
-        send_mail(
-            subject='Добро пожаловать в наш сервис!',
-            message=(f'Спасибо, что зарегистрировались в нашем сервисе! '
-                     f'Перейдите по ссылке для подтверждения почты и завершения регистрации {url}'),
-            from_email=settings.EMAIL_HOST_USER,
-            recipient_list=[user.email]
-        )
+        url = f"http://{host}/users/email-confirm/{self.object.token}/"
+
+        try:
+            send_mail(
+                subject="Добро пожаловать в наш сервис!",
+                message=(
+                    "Спасибо, что зарегистрировались! "
+                    f"Перейдите по ссылке для подтверждения почты: {url}"
+                ),
+                from_email=settings.DEFAULT_FROM_EMAIL,  # лучше так, чем EMAIL_HOST_USER
+                recipient_list=[self.object.email],
+                fail_silently=False,
+            )
+            messages.success(self.request, "Письмо с подтверждением отправлено на вашу почту.")
+        except Exception:
+            # Можно оставить так, чтобы не валить регистрацию
+            messages.warning(self.request, "Не удалось отправить письмо подтверждения. Попробуйте позже.")
+
         return super().form_valid(form)
 
 

@@ -99,12 +99,12 @@ class MailingModel(models.Model):
             ("can_send_message", "Can send_message"),
         ]
 
-    def clean(self):
-        now = timezone.now()
-        if self.beginning_sending < now:
-            raise ValidationError({"beginning_sending": "Начало рассылки не может быть в прошлом."})
-        if self.beginning_sending >= self.end_sending:
-            raise ValidationError({"end_sending": "Конец рассылки должен быть позже начала."})
+    # def clean(self):
+    #     now = timezone.now()
+    #     if self.beginning_sending < now:
+    #         raise ValidationError({"beginning_sending": "Начало рассылки не может быть в прошлом."})
+    #     if self.beginning_sending >= self.end_sending:
+    #         raise ValidationError({"end_sending": "Конец рассылки должен быть позже начала."})
 
     @property
     def calculated_status(self) -> str:
@@ -125,8 +125,6 @@ class MailingModel(models.Model):
 
 
 class MailingAttempt(models.Model):
-    """Модель попытка рассылки"""
-
     SUCCESSFULLY = "successfully"
     NOT_SUCCESSFULL = "not_successful"
 
@@ -135,22 +133,23 @@ class MailingAttempt(models.Model):
         (NOT_SUCCESSFULL, "Не успешно"),
     ]
 
-    date_and_time = models.DateTimeField(auto_now_add=True, verbose_name="Время отправки")
-    status = models.CharField(max_length=20, choices=STATUSES_CHOICES, verbose_name="Статус отправки")
-    server_mail_response = models.TextField(verbose_name="Ответ почтового сервера", blank=True)
-
+    date_and_time = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Время отправки",
+    )
+    status = models.CharField(
+        max_length=20,
+        choices=STATUSES_CHOICES,
+        verbose_name="Статус отправки",
+    )
+    server_mail_response = models.TextField(
+        verbose_name="Ответ почтового сервера",
+    )
     mailing = models.ForeignKey(
         MailingModel,
         on_delete=models.CASCADE,
-        related_name="attempts",   # было mailings
-        verbose_name="Рассылка",
-    )
-
-    subscriber = models.ForeignKey(
-        Subscriber,
-        on_delete=models.CASCADE,
         related_name="attempts",
-        verbose_name="Получатель",
+        verbose_name="Рассылка",
     )
 
     class Meta:
@@ -158,5 +157,3 @@ class MailingAttempt(models.Model):
         verbose_name_plural = "Попытки рассылок"
         ordering = ["-date_and_time"]
 
-    def __str__(self):
-        return f"{self.date_and_time} - {self.get_status_display()}"
