@@ -106,7 +106,7 @@ class SubscriberDetailView(LoginRequiredMixin, DetailView):
             raise PermissionDenied("У Вас недостаточно прав для просмотра этого профиля.")
 
 
-class SubscriberCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+class SubscriberCreateView(LoginRequiredMixin, CreateView):
     '''Создание нового получателя рассылки (подписчика)'''
     model = Subscriber
     form_class = SubscriberForm
@@ -223,7 +223,7 @@ class MessageDetailView(LoginRequiredMixin, DetailView):
             raise PermissionDenied("У Вас недостаточно прав для просмотра.")
 
 
-class MessageCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+class MessageCreateView(LoginRequiredMixin, CreateView):
     '''Создание нового сообщения'''
     model = Message
     form_class = MessageForm
@@ -340,7 +340,7 @@ class MailingModelDetailView(LoginRequiredMixin, DetailView):
             raise PermissionDenied("У Вас недостаточно прав для просмотра.")
 
 
-class MailingModelCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+class MailingModelCreateView(LoginRequiredMixin, CreateView):
     '''Создание новой рассылки'''
     model = MailingModel
     form_class = MailingModelForm

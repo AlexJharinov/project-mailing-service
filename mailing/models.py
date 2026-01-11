@@ -57,11 +57,11 @@ class MailingModel(models.Model):
 
     beginning_sending = models.DateTimeField(
         verbose_name="Начало рассылки",
-        help_text="Укажите время в формате ДД.ММ.ГГГГ ЧЧ:ММ:СС",
+        help_text="Укажите время в формате ГГГГ.ММ.ДД ЧЧ:ММ:СС",
     )
     end_sending = models.DateTimeField(
         verbose_name="Конец рассылки",
-        help_text="Укажите время в формате ДД.ММ.ГГГГ ЧЧ:ММ:СС",
+        help_text="Укажите время в формате ГГГГ.ММ.ДД ЧЧ:ММ:СС",
     )
 
     status = models.CharField(max_length=20, choices=STATUSES_CHOICES, default=CREATED, verbose_name="Статус")
