@@ -1,0 +1,27 @@
+{% extends 'mailing/base.html' %}
+
+{% block title %}Удаление сообщения{% endblock %}
+
+{% block content %}
+
+    {% include 'mailing/includes/header.html' %}
+    <h1>Удаление сообщения для рассылки:</h1>
+    <div class="container">
+        <div class="row">
+            <div class="col-6">
+                <h3>Вы уверены, что хотите удалить "{{ message.subject }}"?</h3>
+                <form method="post">
+                    <div class="card">
+                        <div class="card-body">
+                            {% csrf_token %}
+                        </div>
+                        <p>
+                            <button type="submit" class="btn btn-danger">Удалить</button>
+                            <a href="{% url 'mailing:message_detail' message.pk %}" class="btn btn-secondary">Отмена</a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
